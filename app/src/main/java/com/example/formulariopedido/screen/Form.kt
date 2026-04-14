@@ -7,12 +7,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -26,6 +26,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.launch
 
 @Composable
 fun Form(modifier : Modifier = Modifier){
@@ -42,9 +43,9 @@ fun Form(modifier : Modifier = Modifier){
 
     val nombreError = nombre.length < 2
     val telefonoError = telefono.length != 8
-    val direccionError = direccion.length < 10
+    val direccionError = direccion.isBlank()
     val productoError = producto.length < 5
-    val cantError = cantidad.toIntOrNull()!! <= 0 // Evita que la cantidad insertada sea negativa
+    val cantError = cantidad.toIntOrNull() == null // Evita que la cantidad insertada sea nulla
 
     Scaffold(snackbarHost = {SnackbarHost(snackbarHostState)}){padding ->
         Column(modifier = modifier.padding(32.dp), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -113,6 +114,24 @@ fun Form(modifier : Modifier = Modifier){
                 Text(text = "Notas:")
                 Spacer(modifier = Modifier.width(10.dp))
                 OutlinedTextField(value = notas, onValueChange = {notas = it})
+            }
+
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Button(onClick = {
+                if(nombreError || telefonoError || direccionError || productoError || cantError){
+                    scope.launch {
+                        snackbarHostState.showSnackbar("Verifique los datos ingresados (los que están marcados por rojo)")
+                    }
+                }
+                else{
+                    scope.launch {
+                        snackbarHostState.showSnackbar("Pedido realizado")
+                    }
+                }
+            }){
+                Text(text = "Enviar")
             }
         }
     }
