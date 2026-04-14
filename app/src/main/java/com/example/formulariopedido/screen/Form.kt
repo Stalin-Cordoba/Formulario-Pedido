@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -21,6 +22,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,9 +41,10 @@ fun Form(modifier : Modifier = Modifier){
     val scope = rememberCoroutineScope()
 
     val nombreError = nombre.length < 2
-    val telefonoError = telefono.length < 7
+    val telefonoError = telefono.length != 8
     val direccionError = direccion.length < 10
-    val cantError = cantidad.toIntOrNull() == null
+    val productoError = producto.length < 5
+    val cantError = cantidad.toIntOrNull()!! <= 0 // Evita que la cantidad insertada sea negativa
 
     Scaffold(snackbarHost = {SnackbarHost(snackbarHostState)}){padding ->
         Column(modifier = modifier.padding(32.dp), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -61,11 +64,55 @@ fun Form(modifier : Modifier = Modifier){
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            // Cuadro de texto para: Nombre
+            // Cuadro de texto para: Teléfono
             Row(modifier = modifier.padding(4.dp)){
                 Text(text = "Teléfono:")
                 Spacer(modifier = Modifier.width(10.dp))
-                OutlinedTextField(value = telefono, onValueChange = {telefono = it}, isError = telefonoError)
+                OutlinedTextField(value = telefono,
+                    onValueChange = {telefono = it},
+                    isError = telefonoError,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // Cuadro de texto para: Dirección
+            Row(modifier = modifier.padding(4.dp)){
+                Text(text = "Dirección:")
+                Spacer(modifier = Modifier.width(10.dp))
+                OutlinedTextField(value = direccion, onValueChange = {direccion = it}, isError = direccionError)
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // Cuadro de texto para: Producto
+            Row(modifier = modifier.padding(4.dp)){
+                Text(text = "Producto:")
+                Spacer(modifier = Modifier.width(10.dp))
+                OutlinedTextField(value = producto, onValueChange = {producto = it}, isError = productoError)
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // Cuadro de texto para: Cantidad
+            Row(modifier = modifier.padding(4.dp)){
+                Text(text = "Cantidad:")
+                Spacer(modifier = Modifier.width(10.dp))
+                OutlinedTextField(value = cantidad,
+                    onValueChange = {cantidad = it},
+                    isError = cantError,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // Cuadro de texto para: Notas
+            Row(modifier = modifier.padding(4.dp)){
+                Text(text = "Notas:")
+                Spacer(modifier = Modifier.width(10.dp))
+                OutlinedTextField(value = notas, onValueChange = {notas = it})
             }
         }
     }
